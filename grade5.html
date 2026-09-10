@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Science Quest Kelas 5 · Term 3 & 4 · Cambridge Primary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#0B1E2D;
+    --bg-panel:#122B3F;
+    --bg-panel-light:#17364E;
+    --line:#26445E;
+    --text-main:#EAF3F5;
+    --text-dim:#9FB7C6;
+    --amber:#F4B942;
+    --teal:#4ECDC4;
+    --coral:#EF6B5D;
+    --violet:#9C8CF2;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,.35) 0, transparent 100%),
+      radial-gradient(1px 1px at 70% 60%, rgba(255,255,255,.25) 0, transparent 100%),
+      radial-gradient(1.5px 1.5px at 40% 80%, rgba(255,255,255,.3) 0, transparent 100%),
+      radial-gradient(1px 1px at 85% 20%, rgba(255,255,255,.3) 0, transparent 100%),
+      radial-gradient(1px 1px at 10% 75%, rgba(255,255,255,.2) 0, transparent 100%),
+      linear-gradient(180deg, var(--bg-deep), #081420);
+    font-family:'Nunito', sans-serif;
+    color:var(--text-main);
+    display:flex;
+    justify-content:center;
+    padding:24px 14px 60px;
+    overflow-x:hidden;
+    position:relative;
+  }
+  .app{width:100%;max-width:640px; position:relative; z-index:2;}
+  h1,h2,h3,.display{font-family:'Baloo 2', sans-serif;}
+
+  #confetti-layer{position:fixed; inset:0; pointer-events:none; z-index:50; overflow:hidden;}
+  .confetti-piece{position:absolute; top:-20px; border-radius:2px; opacity:.95; animation:fall linear forwards;}
+  @keyframes fall{
+    0%{transform:translateY(0) rotate(0deg); opacity:1;}
+    100%{transform:translateY(110vh) rotate(540deg); opacity:0;}
+  }
+  .bounce-pop{animation:pop .5s ease;}
+  @keyframes pop{
+    0%{transform:scale(1);}
+    30%{transform:scale(1.35);}
+    60%{transform:scale(0.92);}
+    100%{transform:scale(1);}
+  }
+
+  .header{display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; gap:10px; flex-wrap:wrap;}
+  .brand{display:flex; align-items:center; gap:10px;}
+  .brand-badge{
+    width:42px;height:42px;border-radius:12px;
+    background:linear-gradient(145deg, var(--teal), var(--violet));
+    display:flex;align-items:center;justify-content:center; font-size:22px;
+    box-shadow:0 4px 14px rgba(78,205,196,.25);
+  }
+  .brand-name{font-family:'Baloo 2';font-weight:700;font-size:19px;line-height:1.1;}
+  .brand-sub{font-size:12px;color:var(--text-dim);}
+  .hud{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  .pill{
+    background:var(--bg-panel); border:1px solid var(--line);
+    border-radius:999px; padding:7px 13px; font-weight:800; font-size:14px;
+    display:flex; align-items:center; gap:6px;
+  }
+  .pill.score{color:var(--amber);}
+  .pill.streak{color:var(--teal);}
+  .icon-btn{
+    width:36px; height:36px; border-radius:999px; border:1px solid var(--line);
+    background:var(--bg-panel); color:var(--text-main); font-size:16px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .icon-btn.on{border-color:var(--teal); color:var(--teal);}
+  .lang-toggle{
+    display:flex; border:1px solid var(--line); border-radius:999px; overflow:hidden;
+    background:var(--bg-panel); cursor:pointer; user-select:none;
+  }
+  .lang-toggle button{
+    border:none; background:transparent; color:var(--text-dim); font-family:'Baloo 2';
+    font-weight:700; font-size:13px; padding:7px 12px; cursor:pointer;
+  }
+  .lang-toggle button.active{background:var(--amber); color:#2A1B00;}
+
+  .screen{display:none;}
+  .screen.active{display:block; animation:rise .35s ease;}
+  @keyframes rise{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+
+  .panel{background:var(--bg-panel); border:1px solid var(--line); border-radius:20px; padding:26px 24px;}
+
+  .hero-title{font-size:27px; font-weight:800; line-height:1.2; margin:6px 0 6px;}
+  .hero-title span{color:var(--amber);}
+  .hero-desc{color:var(--text-dim); font-size:15px; line-height:1.5; margin-bottom:22px;}
+  .music-hint{font-size:12.5px; color:var(--text-dim); margin-bottom:18px; display:flex; align-items:center; gap:6px;}
+
+  .mission-list{display:flex; flex-direction:column; gap:12px;}
+  .mission-card{
+    background:var(--bg-panel-light); border:1px solid var(--line); border-radius:16px;
+    padding:16px 18px; display:flex; align-items:center; gap:14px; cursor:pointer;
+    transition:transform .15s ease, border-color .15s ease; text-align:left;
+  }
+  .mission-card:hover{transform:translateY(-2px); border-color:var(--teal);}
+  .mission-icon{
+    width:46px;height:46px;border-radius:12px;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;font-size:24px;
+    background:rgba(78,205,196,.18);
+  }
+  .mission-name{font-family:'Baloo 2'; font-weight:700; font-size:16px; margin-bottom:2px;}
+  .mission-meta{font-size:12px; color:var(--text-dim);}
+  .chevron{margin-left:auto; color:var(--text-dim); font-size:20px;}
+
+  .progress-wrap{margin-bottom:16px;}
+  .progress-track{height:9px; border-radius:999px; background:var(--bg-panel-light); overflow:hidden; border:1px solid var(--line);}
+  .progress-fill{height:100%; border-radius:999px; background:linear-gradient(90deg, var(--teal), var(--amber)); width:0%; transition:width .4s ease;}
+  .progress-label{font-size:12.5px; color:var(--text-dim); margin-top:6px; display:flex; justify-content:space-between;}
+
+  .q-tag{display:inline-block; font-size:11.5px; font-weight:800; letter-spacing:.02em; color:var(--bg-deep); background:var(--amber); padding:3px 10px; border-radius:999px; margin-bottom:12px;}
+  .q-tag.violet{background:var(--violet); color:#fff;}
+  .q-tag.teal{background:var(--teal); color:#04211E;}
+  .q-text{font-size:18px; font-weight:700; line-height:1.4; margin-bottom:16px;}
+  .visual-box{margin-bottom:16px; display:flex; justify-content:center;}
+  .visual-box svg{width:100%; max-width:340px; height:auto;}
+  .data-table{width:100%; border-collapse:collapse; font-size:14px; margin-bottom:4px;}
+  .data-table th, .data-table td{border:1px solid var(--line); padding:8px 6px; text-align:center;}
+  .data-table th{background:var(--bg-panel-light); font-family:'Baloo 2'; color:var(--amber);}
+
+  .options{display:flex; flex-direction:column; gap:10px;}
+  .option{
+    text-align:left; background:var(--bg-panel-light); border:2px solid var(--line); color:var(--text-main);
+    border-radius:14px; padding:13px 16px; font-family:'Nunito'; font-size:15px; font-weight:600;
+    cursor:pointer; display:flex; align-items:center; gap:10px;
+    transition:border-color .15s ease, background .15s ease, transform .1s ease;
+  }
+  .option:hover{border-color:var(--teal); transform:translateY(-1px);}
+  .option .key{
+    width:26px;height:26px;border-radius:8px;flex:0 0 auto;
+    background:var(--bg-deep); display:flex;align-items:center;justify-content:center;
+    font-family:'Baloo 2'; font-weight:700; font-size:13px; color:var(--text-dim);
+  }
+  .option.correct{border-color:var(--teal); background:rgba(78,205,196,.15);}
+  .option.correct .key{background:var(--teal); color:var(--bg-deep);}
+  .option.wrong{border-color:var(--coral); background:rgba(239,107,93,.15);}
+  .option.wrong .key{background:var(--coral); color:var(--bg-deep);}
+  .option:disabled{cursor:default;}
+  .option:disabled:hover{transform:none;}
+
+  .feedback{margin-top:16px; padding:14px 16px; border-radius:14px; font-size:14.5px; line-height:1.5; display:none;}
+  .feedback.show{display:block; animation:rise .25s ease;}
+  .feedback.ok{background:rgba(78,205,196,.12); border:1px solid var(--teal);}
+  .feedback.no{background:rgba(239,107,93,.12); border:1px solid var(--coral);}
+  .feedback strong{font-family:'Baloo 2'; display:block; margin-bottom:3px; font-size:15.5px;}
+
+  .next-btn{
+    margin-top:18px; width:100%; padding:14px; border:none; border-radius:14px;
+    background:var(--amber); color:#2A1B00; font-family:'Baloo 2'; font-weight:700;
+    font-size:16px; cursor:pointer; display:none;
+  }
+  .next-btn.show{display:block;}
+  .next-btn:active{transform:scale(.98);}
+
+  .note-box{
+    width:100%; margin-top:8px; border-radius:14px; border:2px dashed var(--line);
+    background:var(--bg-panel-light); color:var(--text-main); font-family:'Nunito';
+    font-size:14.5px; padding:12px 14px; resize:none; min-height:64px;
+  }
+  .note-box:focus{outline:none; border-color:var(--violet);}
+  .reveal-btn{
+    margin-top:10px; background:transparent; border:1px solid var(--line);
+    color:var(--teal); font-family:'Baloo 2'; font-weight:700; font-size:14px;
+    padding:9px 14px; border-radius:10px; cursor:pointer;
+  }
+  .reveal-btn:hover{border-color:var(--teal);}
+  .model-answer{
+    display:none; margin-top:12px; padding:12px 14px; border-radius:12px;
+    background:rgba(156,140,242,.14); border:1px solid var(--violet); font-size:14px; line-height:1.5;
+  }
+  .model-answer.show{display:block; animation:rise .25s ease;}
+  .model-answer strong{color:var(--violet); font-family:'Baloo 2'; display:block; margin-bottom:4px;}
+
+  .result-emoji{font-size:56px; text-align:center; margin-bottom:6px;}
+  .result-title{font-size:23px; font-weight:800; text-align:center; margin-bottom:4px;}
+  .result-sub{text-align:center; color:var(--text-dim); font-size:14.5px; margin-bottom:22px;}
+  .stat-row{display:flex; gap:10px; margin-bottom:22px;}
+  .stat-box{flex:1; background:var(--bg-panel-light); border:1px solid var(--line); border-radius:14px; padding:14px; text-align:center;}
+  .stat-num{font-family:'Baloo 2'; font-size:22px; font-weight:800; color:var(--amber);}
+  .stat-label{font-size:11px; color:var(--text-dim); margin-top:2px;}
+  .btn-row{display:flex; gap:10px;}
+  .btn{flex:1; padding:13px; border-radius:14px; border:none; cursor:pointer; font-family:'Baloo 2'; font-weight:700; font-size:15px;}
+  .btn.primary{background:var(--teal); color:#04211E;}
+  .btn.ghost{background:transparent; border:1px solid var(--line); color:var(--text-main);}
+
+  .back-link{display:inline-flex; align-items:center; gap:6px; color:var(--text-dim); font-size:13.5px; font-weight:700; cursor:pointer; margin-bottom:14px; user-select:none;}
+  .back-link:hover{color:var(--teal);}
+
+  @media (max-width:420px){
+    .panel{padding:20px 16px;}
+    .hero-title{font-size:22px;}
+    .q-text{font-size:16.5px;}
+  }
+</style>
+</head>
+<body>
+<div id="confetti-layer"></div>
+<div class="app">
+
+  <div class="header">
+    <div class="brand">
+      <div class="brand-badge">🔭</div>
+      <div>
+        <div class="brand-name" id="brand-name">Science Quest</div>
+        <div class="brand-sub" id="brand-sub">Kelas 5 SD · Term 3 & 4 · Kurikulum Cambridge</div>
+      </div>
+    </div>
+    <div class="hud">
+      <div class="lang-toggle">
+        <button id="btn-lang-id" class="active" onclick="setLang('id')">ID</button>
+        <button id="btn-lang-en" onclick="setLang('en')">EN</button>
+      </div>
+      <button class="icon-btn" id="music-btn" onclick="toggleMusic()" title="Musik">🔇</button>
+      <div class="pill score">⭐ <span id="hud-score">0</span></div>
+      <div class="pill streak">🔥 <span id="hud-streak">0</span></div>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div class="screen active" id="screen-home">
+    <div class="panel">
+      <div class="hero-title" id="home-title">Selamat datang, Penjelajah Cilik! <span id="home-title-span">Pilih misimu.</span></div>
+      <div class="hero-desc" id="home-desc">Jawab soal, kumpulkan bintang, dan buktikan kamu jago sains Term 3 & 4! Ada suara saat jawabanmu benar atau salah, efek konfeti seru, musik latar, dan penjelasan di setiap soal.</div>
+      <div class="music-hint" id="music-hint">🎵 <span>Tekan tombol musik di pojok kanan atas untuk menyalakan musik latar.</span></div>
+      <div class="mission-list" id="mission-list"></div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="screen" id="screen-quiz">
+    <div class="back-link" id="back-link" onclick="goHome()">‹ Kembali ke Markas</div>
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="progress-label"><span id="progress-text">Soal 1 dari 10</span><span id="mission-label">Misi 1</span></div>
+    </div>
+    <div class="panel"><div id="quiz-body"></div></div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="screen" id="screen-result">
+    <div class="panel">
+      <div class="result-emoji" id="result-emoji">🏆</div>
+      <div class="result-title" id="result-title">Misi Selesai!</div>
+      <div class="result-sub" id="result-sub">Kerja bagus, Penjelajah.</div>
+      <div class="stat-row">
+        <div class="stat-box"><div class="stat-num" id="res-correct">0</div><div class="stat-label" id="res-correct-label">BENAR</div></div>
+        <div class="stat-box"><div class="stat-num" id="res-total">0</div><div class="stat-label" id="res-total-label">TOTAL SOAL</div></div>
+        <div class="stat-box"><div class="stat-num" id="res-percent">0%</div><div class="stat-label" id="res-percent-label">SKOR</div></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn ghost" id="btn-base" onclick="goHome()">Markas</button>
+        <button class="btn primary" id="btn-retry" onclick="retryMission()">Ulangi Misi</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ================= UI TEXT ================= */
+const UI = {
+  id:{
+    brandSub:"Kelas 5 SD · Term 3 & 4 · Kurikulum Cambridge",
+    homeTitle:"Selamat datang, Penjelajah Cilik!", homeSpan:"Pilih misimu.",
+    homeDesc:"Jawab soal, kumpulkan bintang, dan buktikan kamu jago sains Term 3 & 4! Ada suara saat jawabanmu benar atau salah, efek konfeti seru, musik latar, dan penjelasan di setiap soal.",
+    musicHint:"🎵 Tekan tombol musik di pojok kanan atas untuk menyalakan musik latar.",
+    backLink:"‹ Kembali ke Markas",
+    questionWord:"Soal", ofWord:"dari", missionWord:"Misi",
+    mcTag:"PILIHAN GANDA", pictureTag:"RONDE DIAGRAM TUMBUHAN", diagramTag:"RONDE DIAGRAM & DATA", noteTag:"CATATAN LAPANGAN",
+    correctFeedback:"Benar!", wrongFeedback:"Belum tepat", nextBtn:"Lanjut ›",
+    notePlaceholder:"Tulis jawabanmu di sini...", revealBtn:"Lihat Jawaban Model", modelLabel:"Jawaban Model",
+    baseBtn:"Markas", retryBtn:"Ulangi Misi", correctLabel:"BENAR", totalLabel:"TOTAL SOAL", scoreLabel:"SKOR",
+    resTitle:[[90,"Ahli Sains Sejati!"],[70,"Misi Berhasil!"],[50,"Sedang Menuju Hebat"],[0,"Terus Berlatih"]],
+    resSub:[[90,"Nyaris sempurna — kamu benar-benar memahami misi ini."],[70,"Kerja bagus, Penjelajah — teruskan!"],[50,"Cukup baik! Coba ulangi untuk skor lebih tinggi."],[0,"Jangan menyerah — ulangi misi ini untuk berlatih lagi."]],
+    resEmoji:[[90,"🏆"],[70,"🚀"],[50,"🔬"],[0,"🧪"]]
+  },
+  en:{
+    brandSub:"Grade 5 · Term 3 & 4 · Cambridge Curriculum",
+    homeTitle:"Welcome, Young Explorer!", homeSpan:"Choose your mission.",
+    homeDesc:"Answer questions, collect stars, and prove you're a Term 3 & 4 science whiz! You'll hear a sound when you're right or wrong, fun confetti effects, background music, and an explanation for every question.",
+    musicHint:"🎵 Tap the music button in the top-right corner to turn on background music.",
+    backLink:"‹ Back to Base",
+    questionWord:"Question", ofWord:"of", missionWord:"Mission",
+    mcTag:"MULTIPLE CHOICE", pictureTag:"PLANT DIAGRAM ROUND", diagramTag:"DIAGRAM & DATA ROUND", noteTag:"FIELD NOTES",
+    correctFeedback:"Correct!", wrongFeedback:"Not quite", nextBtn:"Next ›",
+    notePlaceholder:"Write your answer here...", revealBtn:"Show Model Answer", modelLabel:"Model Answer",
+    baseBtn:"Base", retryBtn:"Retry Mission", correctLabel:"CORRECT", totalLabel:"TOTAL QUESTIONS", scoreLabel:"SCORE",
+    resTitle:[[90,"True Science Master!"],[70,"Mission Successful!"],[50,"On Your Way to Great"],[0,"Keep Practising"]],
+    resSub:[[90,"Nearly perfect — you really understand this mission."],[70,"Great work, Explorer — keep it up!"],[50,"Not bad! Try again for a higher score."],[0,"Don't give up — retry this mission for more practice."]],
+    resEmoji:[[90,"🏆"],[70,"🚀"],[50,"🔬"],[0,"🧪"]]
+  }
+};
+function pick(lang, list, pct){ for(const [th,val] of list){ if(pct>=th) return val; } return list[list.length-1][1]; }
+
+/* ================= QUESTION DATA ================= */
+const missions = [
+  {
+    icon:"🌱",
+    title:{id:"Misi 1 · Tumbuhan, Daur Hidup, Ekosistem & Tubuh Manusia", en:"Mission 1 · Plants, Life Cycles, Ecosystems & Human Body"},
+    metaMain:{id:"15 soal pilihan ganda", en:"15 multiple-choice questions"},
+    metaExtra:{id:"+ ronde diagram tumbuhan & catatan lapangan", en:"+ plant diagram round & field notes"},
+    main:[
+      {q:{id:"Proses apa yang memungkinkan tumbuhan hijau membuat makanan?", en:"Which process allows green plants to make food?"}, opts:[{id:"Respirasi",en:"Respiration"},{id:"Fotosintesis",en:"Photosynthesis"},{id:"Pencernaan",en:"Digestion"},{id:"Perkecambahan",en:"Germination"}], correct:1,
+       explain:{id:"Fotosintesis adalah proses yang digunakan tumbuhan hijau untuk membuat makanan menggunakan cahaya, karbon dioksida, dan air.", en:"Photosynthesis is the process green plants use to make food using light, carbon dioxide, and water."}},
+      {q:{id:"Gas apa yang diambil tumbuhan untuk fotosintesis?", en:"Which gas do plants take in for photosynthesis?"}, opts:[{id:"Oksigen",en:"Oxygen"},{id:"Karbon dioksida",en:"Carbon dioxide"},{id:"Nitrogen",en:"Nitrogen"},{id:"Hidrogen",en:"Hydrogen"}], correct:1,
+       explain:{id:"Tumbuhan mengambil karbon dioksida dari udara untuk digunakan dalam fotosintesis.", en:"Plants take in carbon dioxide from the air to use in photosynthesis."}},
+      {q:{id:"Bagian tumbuhan mana yang menyerap air dan mineral?", en:"Which plant part absorbs water and minerals?"}, opts:[{id:"Bunga",en:"Flower"},{id:"Daun",en:"Leaf"},{id:"Akar",en:"Root"},{id:"Buah",en:"Fruit"}], correct:2,
+       explain:{id:"Akar menyerap air dan mineral dari dalam tanah.", en:"Roots absorb water and minerals from the soil."}},
+      {q:{id:"Bagian tumbuhan mana yang membawa air dari akar ke daun?", en:"Which plant part carries water from roots to leaves?"}, opts:[{id:"Batang",en:"Stem"},{id:"Bunga",en:"Flower"},{id:"Biji",en:"Seed"},{id:"Buah",en:"Fruit"}], correct:0,
+       explain:{id:"Batang membawa air dan nutrisi dari akar naik ke daun.", en:"The stem carries water and nutrients from the roots up to the leaves."}},
+      {q:{id:"Apa fungsi utama bunga?", en:"What is the main function of a flower?"}, opts:[{id:"Menyerap air",en:"Absorb water"},{id:"Reproduksi (berkembang biak)",en:"Reproduction"},{id:"Menyimpan tulang",en:"Store bones"},{id:"Menghasilkan suara",en:"Produce sound"}], correct:1,
+       explain:{id:"Fungsi utama bunga adalah reproduksi — menghasilkan biji untuk tumbuhan baru.", en:"A flower's main function is reproduction — producing seeds for new plants."}},
+      {q:{id:"Kumpulan mana yang berisi kondisi yang dibutuhkan untuk perkecambahan?", en:"Which set contains conditions needed for germination?"}, opts:[{id:"Air, oksigen, dan suhu yang sesuai",en:"Water, oxygen and suitable temperature"},{id:"Es dan garam",en:"Ice and salt"},{id:"Hanya kegelapan",en:"Darkness only"},{id:"Api dan air",en:"Fire and water"}], correct:0,
+       explain:{id:"Biji membutuhkan air, oksigen, dan suhu yang sesuai untuk berkecambah.", en:"Seeds need water, oxygen, and a suitable temperature to germinate."}},
+      {q:{id:"Tahap apa yang pertama kali terlihat setelah biji mulai berkecambah?", en:"What is the first visible stage after a seed begins to germinate?"}, opts:[{id:"Kecambah (seedling)",en:"Seedling"},{id:"Buah",en:"Fruit"},{id:"Bunga",en:"Flower"},{id:"Tumbuhan dewasa",en:"Adult plant"}], correct:0,
+       explain:{id:"Setelah perkecambahan dimulai, tahap pertama yang terlihat adalah kecambah (seedling).", en:"After germination begins, the first visible stage is the seedling."}},
+      {q:{id:"Hewan mana yang mengalami metamorfosis sempurna?", en:"Which animal undergoes complete metamorphosis?"}, opts:[{id:"Kupu-kupu",en:"Butterfly"},{id:"Kucing",en:"Cat"},{id:"Gajah",en:"Elephant"},{id:"Ikan",en:"Fish"}], correct:0,
+       explain:{id:"Kupu-kupu mengalami metamorfosis sempurna: telur, larva, pupa, dan dewasa.", en:"A butterfly goes through complete metamorphosis: egg, larva, pupa, and adult."}},
+      {q:{id:"Tahap apa yang datang setelah telur kupu-kupu?", en:"Which stage comes after a butterfly egg?"}, opts:[{id:"Pupa",en:"Pupa"},{id:"Larva/ulat",en:"Larva/caterpillar"},{id:"Dewasa",en:"Adult"},{id:"Biji",en:"Seed"}], correct:1,
+       explain:{id:"Setelah telur menetas, ia menjadi larva (ulat).", en:"After the egg hatches, it becomes a larva (caterpillar)."}},
+      {q:{id:"Organisme mana yang merupakan dekomposer (pengurai)?", en:"Which organism is a decomposer?"}, opts:[{id:"Rumput",en:"Grass"},{id:"Jamur",en:"Mushroom"},{id:"Kelinci",en:"Rabbit"},{id:"Elang",en:"Eagle"}], correct:1,
+       explain:{id:"Jamur adalah dekomposer (pengurai) — ia menguraikan bahan organik yang telah mati.", en:"A mushroom (fungus) is a decomposer — it breaks down dead material."}},
+      {q:{id:"Dalam rantai makanan, tanda panah biasanya menunjukkan arah:", en:"In a food chain, arrows usually show the direction of:"}, opts:[{id:"Perpindahan energi",en:"energy transfer"},{id:"Pergerakan hewan",en:"animal movement"},{id:"Curah hujan",en:"rainfall"},{id:"Gravitasi",en:"gravity"}], correct:0,
+       explain:{id:"Tanda panah dalam rantai makanan menunjukkan arah perpindahan energi dari satu organisme ke organisme berikutnya.", en:"Arrows in a food chain show the direction energy is transferred from one organism to the next."}},
+      {q:{id:"Manakah yang merupakan herbivora?", en:"Which is a herbivore?"}, opts:[{id:"Singa",en:"Lion"},{id:"Kelinci",en:"Rabbit"},{id:"Elang",en:"Eagle"},{id:"Ular",en:"Snake"}], correct:1,
+       explain:{id:"Kelinci adalah herbivora — ia hanya memakan tumbuhan.", en:"A rabbit is a herbivore — it only eats plants."}},
+      {q:{id:"Manakah yang merupakan karnivora?", en:"Which is a carnivore?"}, opts:[{id:"Sapi",en:"Cow"},{id:"Kelinci",en:"Rabbit"},{id:"Singa",en:"Lion"},{id:"Belalang",en:"Grasshopper"}], correct:2,
+       explain:{id:"Singa adalah karnivora — ia memakan hewan lain.", en:"A lion is a carnivore — it eats other animals."}},
+      {q:{id:"Apa yang mungkin terjadi jika satu spesies menghilang dari jaring makanan?", en:"What may happen if one species disappears from a food web?"}, opts:[{id:"Tidak terjadi apa-apa",en:"Nothing"},{id:"Populasi lain mungkin terpengaruh",en:"Other populations may be affected"},{id:"Matahari berhenti bersinar",en:"Sunlight stops"},{id:"Semua tumbuhan langsung mati",en:"All plants die instantly"}], correct:1,
+       explain:{id:"Hilangnya satu spesies dapat memengaruhi populasi organisme lain yang terhubung dengannya dalam jaring makanan.", en:"Removing one species can affect the populations of other organisms connected to it in the food web."}},
+      {q:{id:"Organ mana yang bertanggung jawab utama atas pencernaan?", en:"Which organ is mainly responsible for digestion?"}, opts:[{id:"Lambung",en:"Stomach"},{id:"Jantung",en:"Heart"},{id:"Paru-paru",en:"Lung"},{id:"Otak",en:"Brain"}], correct:0,
+       explain:{id:"Lambung adalah organ utama yang bertanggung jawab mencerna makanan.", en:"The stomach is the main organ responsible for digesting food."}}
+    ],
+    extra:[
+      {type:"mc", visual:"plant",
+       q:{id:"Perhatikan diagram tumbuhan. Bagian mana yang menyerap air dari tanah?", en:"Look at the plant diagram. Which part absorbs water from the soil?"},
+       opts:[{id:"Daun",en:"Leaf"},{id:"Akar",en:"Root"},{id:"Bunga",en:"Flower"},{id:"Batang",en:"Stem"}], correct:1,
+       explain:{id:"Akar menyerap air dan mineral dari tanah.", en:"The roots absorb water and minerals from the soil."}},
+      {type:"mc", visual:"plant",
+       q:{id:"Perhatikan diagram tumbuhan. Bagian mana yang menerima sebagian besar cahaya?", en:"Look at the plant diagram. Which part receives most of the plant's light?"},
+       opts:[{id:"Daun",en:"Leaf"},{id:"Akar",en:"Root"},{id:"Bunga",en:"Flower"},{id:"Batang",en:"Stem"}], correct:0,
+       explain:{id:"Daun menerima sebagian besar cahaya dan menggunakannya untuk fotosintesis.", en:"The leaves receive most of the light and use it for photosynthesis."}},
+      {type:"note",
+       q:{id:"Mengapa batang berguna bagi tumbuhan?", en:"Why is the stem useful to a plant?"},
+       model:{id:"Batang menopang tumbuhan dan membawa air serta nutrisi antara akar dan daun.", en:"The stem supports the plant and carries water and nutrients between the roots and the leaves."}},
+      {type:"note",
+       q:{id:"Sebuah tumbuhan disimpan dalam lemari gelap selama beberapa hari. Apa yang mungkin terjadi dan mengapa?", en:"A plant is kept in a dark cupboard for several days. What may happen and why?"},
+       model:{id:"Tumbuhan mungkin menjadi lemah atau layu, karena ia membutuhkan cahaya untuk melakukan fotosintesis dan membuat makanan.", en:"The plant may become weak or wilt, because it needs light to carry out photosynthesis and make food."}},
+      {type:"note",
+       q:{id:"Seorang murid menanam dua tumbuhan. Tumbuhan A mendapat cukup air dan cahaya; Tumbuhan B tidak mendapat cahaya. Tumbuhan mana yang akan tumbuh lebih baik? Jelaskan.", en:"A student grows two plants. Plant A gets enough water and light; Plant B gets no light. Which should grow better? Explain."},
+       model:{id:"Tumbuhan A akan tumbuh lebih baik, karena cahaya dibutuhkan untuk fotosintesis, dan Tumbuhan B tidak bisa membuat cukup makanan tanpanya.", en:"Plant A should grow better, because light is needed for photosynthesis, and Plant B cannot make enough food without it."}}
+    ]
+  },
+  {
+    icon:"🪐",
+    title:{id:"Misi 2 · Gaya, Bumi & Antariksa, Listrik & Penyelidikan Ilmiah", en:"Mission 2 · Forces, Earth & Space, Electricity & Scientific Investigation"},
+    metaMain:{id:"15 soal pilihan ganda", en:"15 multiple-choice questions"},
+    metaExtra:{id:"+ ronde diagram gaya, tata surya, rangkaian & data", en:"+ forces, solar system, circuit & data round"},
+    main:[
+      {q:{id:"Apa yang terjadi ketika gaya seimbang bekerja pada benda diam?", en:"What happens when balanced forces act on a stationary object?"}, opts:[{id:"Benda harus bergerak",en:"It must move"},{id:"Benda tetap diam",en:"It stays stationary"},{id:"Benda meleleh",en:"It melts"},{id:"Benda menjadi lebih berat",en:"It becomes heavier"}], correct:1,
+       explain:{id:"Ketika gaya-gaya seimbang, tidak ada gaya total, sehingga benda yang diam akan tetap diam.", en:"When forces are balanced, there is no overall force, so a stationary object stays still."}},
+      {q:{id:"Gaya apa yang memperlambat benda bergerak ketika permukaan saling bergesekan?", en:"Which force slows a moving object when surfaces rub?"}, opts:[{id:"Gravitasi",en:"Gravity"},{id:"Gesekan",en:"Friction"},{id:"Magnetisme",en:"Magnetism"},{id:"Cahaya",en:"Light"}], correct:1,
+       explain:{id:"Gesekan terjadi ketika permukaan saling bergesekan, sehingga memperlambat benda yang bergerak.", en:"Friction occurs when surfaces rub together, slowing down moving objects."}},
+      {q:{id:"Gaya apa yang bisa bekerja tanpa benda saling bersentuhan?", en:"Which force can act without objects touching?"}, opts:[{id:"Gesekan",en:"Friction"},{id:"Gravitasi",en:"Gravity"},{id:"Dorongan",en:"Push"},{id:"Hambatan udara",en:"Air resistance"}], correct:1,
+       explain:{id:"Gravitasi adalah gaya yang bisa bekerja dari jarak jauh, tanpa benda perlu bersentuhan.", en:"Gravity is a force that can act at a distance, without objects needing to touch."}},
+      {q:{id:"Material mana yang tertarik oleh magnet?", en:"Which material is attracted to a magnet?"}, opts:[{id:"Besi",en:"Iron"},{id:"Plastik",en:"Plastic"},{id:"Kayu",en:"Wood"},{id:"Kaca",en:"Glass"}], correct:0,
+       explain:{id:"Besi adalah material magnetis dan tertarik oleh magnet.", en:"Iron is a magnetic material and is attracted to magnets."}},
+      {q:{id:"Apa yang terjadi ketika kutub magnet yang sama saling berhadapan?", en:"What happens when like magnetic poles face each other?"}, opts:[{id:"Tarik-menarik",en:"Attract"},{id:"Tolak-menolak",en:"Repel"},{id:"Meleleh",en:"Melt"},{id:"Berhenti menjadi magnet",en:"Stop being magnets"}], correct:1,
+       explain:{id:"Kutub yang sama (U-U atau S-S) saling tolak-menolak.", en:"Like poles (N-N or S-S) repel each other."}},
+      {q:{id:"Planet mana yang paling dekat dengan Matahari?", en:"Which planet is closest to the Sun?"}, opts:[{id:"Bumi",en:"Earth"},{id:"Merkurius",en:"Mercury"},{id:"Mars",en:"Mars"},{id:"Jupiter",en:"Jupiter"}], correct:1,
+       explain:{id:"Merkurius adalah planet yang paling dekat dengan Matahari di Tata Surya kita.", en:"Mercury is the closest planet to the Sun in our Solar System."}},
+      {q:{id:"Planet mana yang terkenal dengan cincinnya?", en:"Which planet is famous for its rings?"}, opts:[{id:"Saturnus",en:"Saturn"},{id:"Venus",en:"Venus"},{id:"Merkurius",en:"Mercury"},{id:"Bumi",en:"Earth"}], correct:0,
+       explain:{id:"Saturnus terkenal dengan sistem cincinnya yang besar dan terang.", en:"Saturn is famous for its large, bright system of rings."}},
+      {q:{id:"Mengapa Bulan terlihat terang?", en:"Why does the Moon appear bright?"}, opts:[{id:"Menghasilkan cahayanya sendiri",en:"It makes its own light"},{id:"Memantulkan cahaya matahari",en:"It reflects sunlight"},{id:"Ia adalah bintang",en:"It is a star"},{id:"Ia terbakar",en:"It burns"}], correct:1,
+       explain:{id:"Bulan terlihat terang karena memantulkan cahaya matahari — ia tidak menghasilkan cahayanya sendiri.", en:"The Moon appears bright because it reflects sunlight — it does not produce its own light."}},
+      {q:{id:"Apa yang menyebabkan musim di Bumi?", en:"What causes seasons on Earth?"}, opts:[{id:"Kemiringan Bumi saat mengorbit Matahari",en:"Earth's tilt as it orbits the Sun"},{id:"Fase Bulan",en:"Moon phases"},{id:"Awan",en:"Clouds"},{id:"Perubahan ukuran Bumi",en:"Earth's size changing"}], correct:0,
+       explain:{id:"Poros Bumi miring, sehingga bagian yang berbeda menerima sinar matahari lebih langsung atau tidak saat mengorbit Matahari, menyebabkan musim.", en:"Earth's axis is tilted, so different parts receive more or less direct sunlight as it orbits the Sun, causing seasons."}},
+      {q:{id:"Manakah yang merupakan sumber energi terbarukan?", en:"Which is a renewable energy source?"}, opts:[{id:"Batu bara",en:"Coal"},{id:"Minyak bumi",en:"Oil"},{id:"Sinar matahari",en:"Sunlight"},{id:"Gas alam",en:"Natural gas"}], correct:2,
+       explain:{id:"Sinar matahari adalah sumber energi terbarukan karena tidak akan habis.", en:"Sunlight is a renewable energy source because it will not run out."}},
+      {q:{id:"Komponen mana yang membuka atau menutup rangkaian?", en:"Which component opens or closes a circuit?"}, opts:[{id:"Saklar",en:"Switch"},{id:"Baterai",en:"Battery"},{id:"Bohlam",en:"Bulb"},{id:"Kabel",en:"Wire"}], correct:0,
+       explain:{id:"Saklar digunakan untuk membuka atau menutup rangkaian listrik.", en:"A switch is used to open or close an electrical circuit."}},
+      {q:{id:"Apa yang terjadi pada rangkaian seri jika satu bohlam dilepas?", en:"What happens in a series circuit if one bulb is removed?"}, opts:[{id:"Bohlam lain tetap menyala",en:"Other bulb stays on"},{id:"Rangkaian menjadi terputus",en:"Circuit is broken"},{id:"Baterai menjadi dua kali lipat",en:"Battery doubles"},{id:"Tidak ada yang berubah",en:"Nothing changes"}], correct:1,
+       explain:{id:"Dalam rangkaian seri, melepas satu bohlam memutus seluruh rangkaian, sehingga bohlam lain juga ikut mati.", en:"In a series circuit, removing one bulb breaks the whole circuit, so the other bulb also goes out."}},
+      {q:{id:"Material mana yang merupakan isolator listrik?", en:"Which material is an electrical insulator?"}, opts:[{id:"Tembaga",en:"Copper"},{id:"Aluminium",en:"Aluminium"},{id:"Karet",en:"Rubber"},{id:"Besi",en:"Iron"}], correct:2,
+       explain:{id:"Karet tidak menghantarkan listrik, sehingga menjadi isolator listrik yang baik.", en:"Rubber does not conduct electricity, so it is a good electrical insulator."}},
+      {q:{id:"Perubahan mana yang merupakan perubahan kimia?", en:"Which change is chemical?"}, opts:[{id:"Es mencair",en:"Melting ice"},{id:"Gula larut",en:"Dissolving sugar"},{id:"Kayu terbakar",en:"Burning wood"},{id:"Air membeku",en:"Freezing water"}], correct:2,
+       explain:{id:"Kayu terbakar adalah perubahan kimia — menghasilkan zat baru seperti abu dan asap yang tidak bisa dikembalikan.", en:"Burning wood is a chemical change — it produces new substances like ash and smoke that cannot be reversed."}},
+      {q:{id:"Gas mana yang merupakan gas rumah kaca utama?", en:"Which gas is a major greenhouse gas?"}, opts:[{id:"Karbon dioksida",en:"Carbon dioxide"},{id:"Oksigen",en:"Oxygen"},{id:"Helium",en:"Helium"},{id:"Neon",en:"Neon"}], correct:0,
+       explain:{id:"Karbon dioksida adalah gas rumah kaca utama yang menahan panas di atmosfer Bumi.", en:"Carbon dioxide is a major greenhouse gas that traps heat in Earth's atmosphere."}}
+    ],
+    extra:[
+      {type:"mc", visual:"forces",
+       q:{id:"Perhatikan diagram kotak yang didorong. Panah mana yang menunjukkan gaya yang bekerja ke bawah (gravitasi)?", en:"Look at the diagram of the box being pushed. Which arrow shows the force that acts downward (gravity)?"},
+       opts:[{id:"Panah 1 (bawah)",en:"Arrow 1 (down)"},{id:"Panah 2 (kanan)",en:"Arrow 2 (right)"},{id:"Panah 3 (kiri)",en:"Arrow 3 (left)"}], correct:0,
+       explain:{id:"Gravitasi selalu menarik lurus ke bawah, ditunjukkan oleh Panah 1.", en:"Gravity always pulls straight down, shown by Arrow 1."}},
+      {type:"mc", visual:"forces",
+       q:{id:"Panah mana yang menunjukkan gaya yang melawan gerakan benda (gesekan)?", en:"Which arrow shows the force that opposes the object's movement (friction)?"},
+       opts:[{id:"Panah 1 (bawah)",en:"Arrow 1 (down)"},{id:"Panah 2 (kanan)",en:"Arrow 2 (right)"},{id:"Panah 3 (kiri)",en:"Arrow 3 (left)"}], correct:2,
+       explain:{id:"Gesekan bekerja berlawanan dengan arah gerakan, ditunjukkan oleh Panah 3.", en:"Friction acts opposite to the direction of motion, shown by Arrow 3."}},
+      {type:"mc", visual:"solarsystem",
+       q:{id:"Perhatikan diagram Tata Surya. Posisi ke berapa dari Matahari yang menunjukkan Bumi?", en:"Look at the Solar System diagram. Which position from the Sun shows Earth?"},
+       opts:[{id:"Posisi 1 (paling dekat)",en:"Position 1 (closest)"},{id:"Posisi 2",en:"Position 2"},{id:"Posisi 3 (paling jauh)",en:"Position 3 (farthest)"}], correct:0,
+       explain:{id:"Dalam diagram, Bumi ditampilkan paling dekat dengan Matahari di antara tiga planet (Bumi, Mars, Jupiter), sehingga berada di Posisi 1.", en:"In the diagram, Earth is shown closest to the Sun among the three planets (Earth, Mars, Jupiter), so it is Position 1."}},
+      {type:"mc", visual:"solarsystem",
+       q:{id:"Planet mana dalam diagram yang paling besar sekaligus paling jauh dari Matahari?", en:"Which planet shown in the diagram is both the largest and the farthest from the Sun?"},
+       opts:[{id:"Bumi",en:"Earth"},{id:"Mars",en:"Mars"},{id:"Jupiter",en:"Jupiter"}], correct:2,
+       explain:{id:"Jupiter adalah planet terbesar di Tata Surya kita dan juga paling jauh dari Matahari di antara tiga planet yang ditampilkan.", en:"Jupiter is the largest planet in our Solar System and is also the farthest from the Sun among the three shown."}},
+      {type:"mc", visual:"circuit",
+       q:{id:"Perhatikan diagram. Rangkaian mana yang lengkap sehingga bohlam bisa menyala?", en:"Look at the diagram. Which circuit is complete, so the bulb will light?"},
+       opts:[{id:"Rangkaian A",en:"Circuit A"},{id:"Rangkaian B",en:"Circuit B"}], correct:0,
+       explain:{id:"Rangkaian A tidak memiliki celah, sehingga arus bisa mengalir dan menyalakan bohlam. Rangkaian B memiliki celah, sehingga tidak lengkap.", en:"Circuit A has no gaps, so current can flow and light the bulb. Circuit B has a gap, so it is incomplete."}},
+      {type:"mc", visual:"toycar",
+       q:{id:"Mobil mainan didorong di tiga permukaan. Lihat data. Permukaan mana yang membuat mobil menempuh jarak terjauh?", en:"A toy car is pushed across three surfaces. Look at the data. Which surface allowed the car to travel furthest?"},
+       opts:[{id:"Karpet",en:"Carpet"},{id:"Kayu",en:"Wood"},{id:"Keramik",en:"Tile"}], correct:2,
+       explain:{id:"Mobil menempuh 90 cm di keramik — jarak terjauh — karena keramik licin dan memiliki gesekan paling kecil.", en:"The car travelled 90 cm on tile — the furthest distance — because tile is smooth and has the least friction."}},
+      {type:"mc", visual:"toycar",
+       q:{id:"Permukaan mana yang kemungkinan besar memiliki gesekan paling besar?", en:"Which surface probably has the greatest friction?"},
+       opts:[{id:"Karpet",en:"Carpet"},{id:"Kayu",en:"Wood"},{id:"Keramik",en:"Tile"}], correct:0,
+       explain:{id:"Karpet menghasilkan jarak terpendek (32 cm), sehingga kemungkinan besar memiliki gesekan paling besar.", en:"Carpet gave the shortest distance (32 cm), so it probably has the greatest friction."}},
+      {type:"mc", visual:"plantgrowth",
+       q:{id:"Perhatikan tabel data pertumbuhan tumbuhan. Tumbuhan mana yang tumbuh lebih banyak antara Minggu 1 dan Minggu 3?", en:"Look at the plant growth data table. Which plant grew more between Week 1 and Week 3?"},
+       opts:[{id:"Tumbuhan A",en:"Plant A"},{id:"Tumbuhan B",en:"Plant B"}], correct:0,
+       explain:{id:"Tumbuhan A tumbuh dari 4 cm menjadi 10 cm (total 6 cm), lebih banyak dibanding Tumbuhan B yang hanya tumbuh dari 4 cm menjadi 6 cm (total 2 cm).", en:"Plant A grew from 4 cm to 10 cm (6 cm total), more than Plant B, which only grew from 4 cm to 6 cm (2 cm total)."}},
+      {type:"note",
+       q:{id:"Mengapa kabel listrik dilapisi dengan plastik?", en:"Why are electrical wires covered with plastic?"},
+       model:{id:"Plastik adalah isolator listrik, sehingga mencegah arus listrik mengalir keluar dan melindungi orang dari sengatan listrik.", en:"Plastic is an electrical insulator, so it stops electric current from passing through and protects people from electric shocks."}},
+      {type:"note",
+       q:{id:"Seorang murid berkata, 'Bulan menghasilkan cahayanya sendiri.' Apakah ini benar? Jelaskan.", en:"A student says, 'The Moon makes its own light.' Is this correct? Explain."},
+       model:{id:"Tidak, ini tidak benar. Bulan tidak menghasilkan cahayanya sendiri — ia hanya memantulkan cahaya matahari.", en:"No, this is not correct. The Moon does not produce its own light — it only reflects sunlight."}}
+    ]
+  }
+];
+
+/* ================= VISUALS ================= */
+function visualHTML(tag){
+  if(tag === "plant"){
+    return `<div class="visual-box"><svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+      <line x1="110" y1="180" x2="110" y2="70" stroke="#4ECDC4" stroke-width="6"/>
+      <ellipse cx="140" cy="60" rx="34" ry="16" fill="#7CE0D3" transform="rotate(-18 140 60)"/>
+      <ellipse cx="80" cy="90" rx="30" ry="14" fill="#7CE0D3" transform="rotate(18 80 90)"/>
+      <text x="150" y="42" font-size="13" fill="#9FB7C6" font-family="Baloo 2, sans-serif">LEAF</text>
+      <path d="M110 180 Q85 200 60 212 M110 180 Q135 200 160 212 M110 180 Q110 205 110 216" stroke="#C99B5B" stroke-width="3" fill="none"/>
+      <text x="65" y="216" font-size="13" fill="#9FB7C6" font-family="Baloo 2, sans-serif">ROOTS</text>
+    </svg></div>`;
+  }
+  if(tag === "forces"){
+    return `<div class="visual-box"><svg viewBox="0 0 300 160" xmlns="http://www.w3.org/2000/svg">
+      <rect x="120" y="55" width="60" height="55" fill="#F4B942" rx="8"/>
+      <text x="140" y="88" font-size="20" fill="#2A1B00">📦</text>
+      <line x1="150" y1="112" x2="150" y2="150" stroke="#4ECDC4" stroke-width="5"/>
+      <polygon points="150,150 143,138 157,138" fill="#4ECDC4"/>
+      <text x="156" y="145" fill="#4ECDC4" font-size="13" font-family="Baloo 2, sans-serif">1</text>
+      <line x1="182" y1="82" x2="222" y2="82" stroke="#9C8CF2" stroke-width="5"/>
+      <polygon points="222,82 210,75 210,89" fill="#9C8CF2"/>
+      <text x="215" y="70" fill="#9C8CF2" font-size="13" font-family="Baloo 2, sans-serif">2</text>
+      <line x1="118" y1="82" x2="78" y2="82" stroke="#EF6B5D" stroke-width="5"/>
+      <polygon points="78,82 90,75 90,89" fill="#EF6B5D"/>
+      <text x="72" y="70" fill="#EF6B5D" font-size="13" font-family="Baloo 2, sans-serif">3</text>
+    </svg></div>`;
+  }
+  if(tag === "solarsystem"){
+    return `<div class="visual-box"><svg viewBox="0 0 320 110" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="35" cy="55" r="22" fill="#F4B942"/>
+      <text x="18" y="95" font-size="12" fill="#9FB7C6" font-family="Baloo 2, sans-serif">SUN</text>
+      <circle cx="130" cy="55" r="8" fill="#4ECDC4"/>
+      <text x="123" y="80" font-size="12" fill="#9FB7C6" font-family="Baloo 2, sans-serif">1</text>
+      <circle cx="205" cy="55" r="10" fill="#EF6B5D"/>
+      <text x="198" y="80" font-size="12" fill="#9FB7C6" font-family="Baloo 2, sans-serif">2</text>
+      <circle cx="285" cy="55" r="17" fill="#9C8CF2"/>
+      <text x="276" y="86" font-size="12" fill="#9FB7C6" font-family="Baloo 2, sans-serif">3</text>
+    </svg></div>`;
+  }
+  if(tag === "circuit"){
+    return `<div class="visual-box"><svg viewBox="0 0 320 130" xmlns="http://www.w3.org/2000/svg">
+      <text x="55" y="16" fill="#9FB7C6" font-size="14" font-family="Baloo 2, sans-serif">A</text>
+      <rect x="20" y="26" width="100" height="70" fill="none" stroke="#4ECDC4" stroke-width="4"/>
+      <circle cx="70" cy="26" r="10" fill="none" stroke="#F4B942" stroke-width="3"/>
+      <line x1="58" y1="96" x2="58" y2="110" stroke="#EAF3F5" stroke-width="4"/>
+      <line x1="82" y1="96" x2="82" y2="105" stroke="#EAF3F5" stroke-width="2"/>
+      <text x="225" y="16" fill="#9FB7C6" font-size="14" font-family="Baloo 2, sans-serif">B</text>
+      <rect x="200" y="26" width="100" height="70" fill="none" stroke="#EF6B5D" stroke-width="4"/>
+      <rect x="296" y="50" width="8" height="24" fill="#122B3F"/>
+      <circle cx="250" cy="26" r="10" fill="none" stroke="#F4B942" stroke-width="3"/>
+      <line x1="238" y1="96" x2="238" y2="110" stroke="#EAF3F5" stroke-width="4"/>
+      <line x1="262" y1="96" x2="262" y2="105" stroke="#EAF3F5" stroke-width="2"/>
+    </svg></div>`;
+  }
+  if(tag === "toycar"){
+    return `<table class="data-table"><tr><th>Surface / Permukaan</th><th>Carpet / Karpet</th><th>Wood / Kayu</th><th>Tile / Keramik</th></tr>
+      <tr><td>Distance / Jarak</td><td>32 cm</td><td>61 cm</td><td>90 cm</td></tr></table>`;
+  }
+  if(tag === "plantgrowth"){
+    return `<table class="data-table"><tr><th>Plant / Tumbuhan</th><th>Week 1</th><th>Week 2</th><th>Week 3</th></tr>
+      <tr><td>A</td><td>4 cm</td><td>7 cm</td><td>10 cm</td></tr>
+      <tr><td>B</td><td>4 cm</td><td>5 cm</td><td>6 cm</td></tr></table>`;
+  }
+  return "";
+}
+
+/* ================= AUDIO ================= */
+let audioCtx = null;
+function getCtx(){ if(!audioCtx){ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); } return audioCtx; }
+function tone(freq, duration, type, delay, gainVal, dest){
+  try{
+    const ctx = getCtx();
+    const t0 = ctx.currentTime + (delay||0);
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type || 'sine';
+    osc.frequency.setValueAtTime(freq, t0);
+    gain.gain.setValueAtTime(gainVal||0.15, t0);
+    gain.gain.exponentialRampToValueAtTime(0.001, t0+duration);
+    osc.connect(gain).connect(dest || ctx.destination);
+    osc.start(t0); osc.stop(t0+duration);
+  }catch(e){}
+}
+function playCorrectSound(){ tone(523.25,0.14,'triangle',0,0.16); tone(659.25,0.14,'triangle',0.12,0.16); tone(783.99,0.24,'triangle',0.24,0.16); }
+function playWrongSound(){ tone(180,0.28,'sawtooth',0,0.13); tone(120,0.34,'sawtooth',0.06,0.11); }
+function playFanfareSound(){
+  const notes=[523.25,659.25,783.99,1046.5];
+  notes.forEach((f,i)=> tone(f, 0.3, 'triangle', i*0.13, 0.15));
+}
+
+/* ---- Background music (self-generated loop, no external file) ---- */
+let musicGain = null;
+let musicInterval = null;
+let musicOn = false;
+const musicPattern = [392.0, 523.25, 493.88, 392.0, 329.63, 392.0, 440.0, 349.23];
+let musicStep = 0;
+function musicTick(){
+  const ctx = getCtx();
+  if(!musicGain){
+    musicGain = ctx.createGain();
+    musicGain.gain.value = 0.05;
+    musicGain.connect(ctx.destination);
+  }
+  const freq = musicPattern[musicStep % musicPattern.length];
+  tone(freq, 0.55, 'sine', 0, 0.08, musicGain);
+  tone(freq*2, 0.4, 'sine', 0, 0.02, musicGain);
+  musicStep++;
+}
+function toggleMusic(){
+  musicOn = !musicOn;
+  const btn = document.getElementById('music-btn');
+  if(musicOn){
+    getCtx();
+    musicTick();
+    musicInterval = setInterval(musicTick, 480);
+    btn.textContent = '🔊';
+    btn.classList.add('on');
+  } else {
+    clearInterval(musicInterval);
+    btn.textContent = '🔇';
+    btn.classList.remove('on');
+  }
+}
+
+/* ================= CONFETTI ================= */
+const confettiColors = ['#F4B942','#4ECDC4','#9C8CF2','#EF6B5D','#7CE0D3'];
+function launchConfetti(count){
+  const layer = document.getElementById('confetti-layer');
+  for(let i=0;i<count;i++){
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const size = 6 + Math.random()*6;
+    piece.style.width = size+'px';
+    piece.style.height = (size*0.4)+'px';
+    piece.style.left = (Math.random()*100)+'vw';
+    piece.style.background = confettiColors[Math.floor(Math.random()*confettiColors.length)];
+    const duration = 1.6 + Math.random()*1.4;
+    piece.style.animationDuration = duration+'s';
+    piece.style.animationDelay = (Math.random()*0.3)+'s';
+    layer.appendChild(piece);
+    setTimeout(()=>piece.remove(), (duration+0.5)*1000);
+  }
+}
+function bouncePop(elId){
+  const el = document.getElementById(elId);
+  if(!el) return;
+  el.classList.remove('bounce-pop');
+  void el.offsetWidth;
+  el.classList.add('bounce-pop');
+}
+
+/* ================= STATE ================= */
+let currentLang = 'id';
+let state = { missionIndex:0, phase:'main', qIndex:0, correctCount:0, answered:false, score:0, streak:0 };
+
+/* ================= LANG SWITCH ================= */
+function setLang(lang){
+  currentLang = lang;
+  document.getElementById('btn-lang-id').classList.toggle('active', lang==='id');
+  document.getElementById('btn-lang-en').classList.toggle('active', lang==='en');
+  document.getElementById('brand-sub').textContent = UI[lang].brandSub;
+  document.getElementById('home-title').childNodes[0].nodeValue = UI[lang].homeTitle + " ";
+  document.getElementById('home-title-span').textContent = UI[lang].homeSpan;
+  document.getElementById('home-desc').textContent = UI[lang].homeDesc;
+  document.getElementById('music-hint').lastElementChild.textContent = UI[lang].musicHint.replace('🎵 ','');
+  document.getElementById('back-link').textContent = UI[lang].backLink;
+  document.getElementById('btn-base').textContent = UI[lang].baseBtn;
+  document.getElementById('btn-retry').textContent = UI[lang].retryBtn;
+  document.getElementById('res-correct-label').textContent = UI[lang].correctLabel;
+  document.getElementById('res-total-label').textContent = UI[lang].totalLabel;
+  document.getElementById('res-percent-label').textContent = UI[lang].scoreLabel;
+  renderMissionList();
+  const activeScreen = document.querySelector('.screen.active').id;
+  if(activeScreen === 'screen-quiz') renderQuestion();
+}
+
+/* ================= HOME / MISSION LIST ================= */
+function renderMissionList(){
+  const wrap = document.getElementById('mission-list');
+  wrap.innerHTML = '';
+  missions.forEach((m, idx)=>{
+    const card = document.createElement('div');
+    card.className = 'mission-card';
+    card.onclick = ()=>startMission(idx);
+    card.innerHTML = `
+      <div class="mission-icon">${m.icon}</div>
+      <div>
+        <div class="mission-name">${m.title[currentLang]}</div>
+        <div class="mission-meta">${m.metaMain[currentLang]} ${m.metaExtra[currentLang]}</div>
+      </div>
+      <div class="chevron">›</div>`;
+    wrap.appendChild(card);
+  });
+}
+
+/* ================= NAV ================= */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function goHome(){ showScreen('screen-home'); }
+function startMission(idx){
+  state = {missionIndex:idx, phase:'main', qIndex:0, correctCount:0, answered:false, score:state.score, streak:state.streak};
+  document.getElementById('mission-label').textContent = UI[currentLang].missionWord + " " + (idx+1);
+  showScreen('screen-quiz');
+  renderQuestion();
+}
+function retryMission(){ startMission(state.missionIndex); }
+function updateHud(){
+  document.getElementById('hud-score').textContent = state.score;
+  document.getElementById('hud-streak').textContent = state.streak;
+}
+
+/* ================= QUIZ RENDER ================= */
+function renderQuestion(){
+  const lang = currentLang;
+  const mission = missions[state.missionIndex];
+  const totalMain = mission.main.length;
+  const totalExtra = mission.extra.length;
+  const totalSteps = totalMain + totalExtra;
+
+  if(state.phase === 'main' && state.qIndex >= totalMain){
+    state.phase = 'extra';
+    state.qIndex = 0;
+  }
+  if(state.phase === 'extra' && state.qIndex >= totalExtra){
+    finishMission();
+    return;
+  }
+
+  const stepNow = state.phase === 'main' ? state.qIndex+1 : totalMain + state.qIndex + 1;
+  document.getElementById('progress-text').textContent = UI[lang].questionWord + " " + stepNow + " " + UI[lang].ofWord + " " + totalSteps;
+  document.getElementById('progress-fill').style.width = (stepNow-1)/totalSteps*100 + "%";
+  document.getElementById('mission-label').textContent = UI[lang].missionWord + " " + (state.missionIndex+1);
+
+  const body = document.getElementById('quiz-body');
+  const list = state.phase === 'main' ? mission.main : mission.extra;
+  const item = list[state.qIndex];
+
+  if(item.type === 'note'){
+    body.innerHTML = `
+      <div class="q-tag violet">${UI[lang].noteTag}</div>
+      <div class="q-text">${item.q[lang]}</div>
+      <textarea class="note-box" placeholder="${UI[lang].notePlaceholder}"></textarea>
+      <button class="reveal-btn" onclick="revealNote(this)">${UI[lang].revealBtn}</button>
+      <div class="model-answer" id="model-ans"><strong>${UI[lang].modelLabel}</strong>${item.model[lang]}</div>
+      <button class="next-btn show" onclick="nextStep()">${UI[lang].nextBtn}</button>
+    `;
+    return;
+  }
+
+  state.answered = false;
+  let tagLabel = UI[lang].mcTag;
+  let tagClass = "";
+  if(item.visual === 'plant'){ tagLabel = UI[lang].pictureTag; }
+  if(item.visual === 'circuit' || item.visual === 'forces' || item.visual === 'toycar' || item.visual === 'solarsystem' || item.visual === 'plantgrowth'){ tagLabel = UI[lang].diagramTag; tagClass = "teal"; }
+
+  body.innerHTML = `
+    <div class="q-tag ${tagClass}">${tagLabel}</div>
+    <div class="q-text">${item.q[lang]}</div>
+    ${item.visual ? visualHTML(item.visual) : ''}
+    <div class="options" id="opts"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="next-btn" onclick="nextStep()">${UI[lang].nextBtn}</button>
+  `;
+  const optsWrap = document.getElementById('opts');
+  const letters = ['A','B','C','D'];
+  item.opts.forEach((opt,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = `<span class="key">${letters[i]}</span><span>${opt[lang]}</span>`;
+    btn.onclick = ()=>selectAnswer(i, item);
+    optsWrap.appendChild(btn);
+  });
+}
+
+function selectAnswer(i, item){
+  if(state.answered) return;
+  state.answered = true;
+  const lang = currentLang;
+  const opts = document.querySelectorAll('#opts .option');
+  opts.forEach((o,idx)=>{
+    o.disabled = true;
+    if(idx === item.correct) o.classList.add('correct');
+    else if(idx === i) o.classList.add('wrong');
+  });
+  const fb = document.getElementById('feedback');
+  const nextBtn = document.getElementById('next-btn');
+  if(i === item.correct){
+    state.correctCount++;
+    state.score += 10 + state.streak*2;
+    state.streak++;
+    playCorrectSound();
+    launchConfetti(16);
+    bouncePop('hud-score');
+    fb.className = 'feedback ok show';
+    fb.innerHTML = `<strong>${UI[lang].correctFeedback} ⭐</strong>${item.explain[lang]}`;
+  } else {
+    state.streak = 0;
+    playWrongSound();
+    fb.className = 'feedback no show';
+    fb.innerHTML = `<strong>${UI[lang].wrongFeedback}</strong>${item.explain[lang]}`;
+  }
+  updateHud();
+  nextBtn.classList.add('show');
+}
+
+function revealNote(btn){
+  document.getElementById('model-ans').classList.add('show');
+  btn.style.display = 'none';
+}
+function nextStep(){ state.qIndex++; renderQuestion(); }
+
+function finishMission(){
+  const lang = currentLang;
+  const mission = missions[state.missionIndex];
+  const total = mission.main.length;
+  const pct = Math.round(state.correctCount/total*100);
+  document.getElementById('res-correct').textContent = state.correctCount;
+  document.getElementById('res-total').textContent = total;
+  document.getElementById('res-percent').textContent = pct + "%";
+  document.getElementById('result-emoji').textContent = pick(lang, UI[lang].resEmoji, pct);
+  document.getElementById('result-title').textContent = pick(lang, UI[lang].resTitle, pct);
+  document.getElementById('result-sub').textContent = pick(lang, UI[lang].resSub, pct);
+  showScreen('screen-result');
+  if(pct >= 50){
+    playFanfareSound();
+    launchConfetti(pct >= 90 ? 90 : 50);
+    bouncePop('result-emoji');
+  }
+}
+
+/* ================= INIT ================= */
+renderMissionList();
+</script>
+</body>
+</html>
